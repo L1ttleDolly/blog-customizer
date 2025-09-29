@@ -11,11 +11,12 @@ import {
 	contentWidthArr,
 	OptionType,
 } from 'src/constants/articleProps';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { RadioGroup } from 'src/ui/radio-group';
 import { Select } from 'src/ui/select';
 import { Text } from 'src/ui/text';
 import { Separator } from 'src/ui/separator';
+import { useFormOutsideClickClose } from 'src/ui/select/hooks/useFormOutsideClickClose';
 
 export type TFormValue = {
 	fontFamily: OptionType;
@@ -27,6 +28,7 @@ export type TFormValue = {
 
 export type TArticleParamsFormProps = {
 	articleChange: (value: TFormValue) => void;
+	onClose?: () => void;
 };
 
 export const ArticleParamsForm = (props: TArticleParamsFormProps) => {
@@ -38,11 +40,19 @@ export const ArticleParamsForm = (props: TArticleParamsFormProps) => {
 		contentWidth: defaultArticleState.contentWidth,
 	};
 
-	const [modal, setModal] = useState(false);
+	const [isOpen, setModal] = useState<boolean>(false);
 
 	const [value, setValue] = useState<TFormValue>(defaultValues);
+	const rootRef = useRef<HTMLFormElement>(null);
 
-	const { articleChange } = props;
+	const { articleChange, onClose } = props;
+
+	useFormOutsideClickClose({
+		isOpen,
+		rootRef,
+		onClose,
+		onChange: setModal,
+	});
 
 	function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
@@ -60,14 +70,15 @@ export const ArticleParamsForm = (props: TArticleParamsFormProps) => {
 
 	return (
 		<>
-			<ArrowButton isOpen={modal} onClick={handleClickModal} />
+			<ArrowButton isOpen={isOpen} onClick={handleClickModal} />
 			<aside
 				className={
-					!modal
+					!isOpen
 						? `${styles.container}`
 						: `${styles.container} ${styles.container_open}`
 				}>
 				<form
+					ref={rootRef}
 					className={styles.form}
 					onSubmit={handleSubmit}
 					onReset={handleReset}>
