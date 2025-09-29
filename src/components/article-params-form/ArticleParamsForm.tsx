@@ -82,7 +82,7 @@ export const ArticleParamsForm = (props: TArticleParamsFormProps) => {
 					className={styles.form}
 					onSubmit={handleSubmit}
 					onReset={handleReset}>
-					<Text as='h2' size={38} weight={800} uppercase>
+					<Text as='h2' size={31} weight={800} uppercase>
 						{'Задайте параметры'}
 					</Text>
 					<Select
